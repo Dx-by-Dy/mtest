@@ -1,8 +1,8 @@
-use std::fs::OpenOptions;
+use std::fs::{create_dir_all, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
 use std::net::TcpListener;
 
-const LOGGER_ADDR: &str = "127.0.0.1:6000";
+const LOGGER_ADDR: &str = "logger:6000";
 
 fn main() {
     let listener = TcpListener::bind(LOGGER_ADDR).unwrap();
@@ -13,6 +13,8 @@ fn main() {
         match stream {
             Ok(stream) => {
                 println!("server connected");
+
+                create_dir_all("/app/logs").unwrap();
 
                 let mut file = OpenOptions::new()
                     .create(true)
