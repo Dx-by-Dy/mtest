@@ -17,7 +17,7 @@ fn main() {
         for line in reader.lines() {
             match line {
                 Ok(msg) => {
-                    println!("{}", msg);
+                    println!("getting msg: {}", msg);
                 }
 
                 Err(_) => {
