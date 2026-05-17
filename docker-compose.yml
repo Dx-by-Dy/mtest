@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  logger:
+    build: .
+    container_name: logger
+
+    command: ./target/release/logger
+
+    ports:
+      - "6000:6000"
+
+    volumes:
+      - ./logs:/app/logs
+
+  server:
+    build: .
+    container_name: server
+
+    command: ./target/release/server
+
+    depends_on:
+      - logger
+
+    ports:
+      - "5000:5000"
+
+  client:
+    build: .
+    stdin_open: true
+    tty: true
+
+    command: ./target/release/client
+
+    depends_on:
+      - server
