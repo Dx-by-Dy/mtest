@@ -2,7 +2,7 @@ use std::fs::{create_dir_all, OpenOptions};
 use std::io::{BufRead, BufReader, Write};
 use std::net::TcpListener;
 
-const LOGGER_ADDR: &str = "logger:6000";
+const LOGGER_ADDR: &str = "0.0.0.0:6000";
 
 fn main() {
     let listener = TcpListener::bind(LOGGER_ADDR).unwrap();
