@@ -3,7 +3,7 @@ use std::net::{TcpListener, TcpStream};
 use std::sync::{Arc, Mutex};
 use std::thread;
 
-const SERVER_ADDR: &str = "0.0.0.0:5000";
+const SERVER_ADDR: &str = "0.0.0.0:8080";
 const LOGGER_ADDR: &str = "logger:6000";
 
 type Clients = Arc<Mutex<Vec<TcpStream>>>;
