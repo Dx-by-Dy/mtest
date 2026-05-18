@@ -2,7 +2,7 @@ use std::io::{stdin, BufRead, BufReader, Write};
 use std::net::TcpStream;
 use std::thread;
 
-const SERVER_ADDR: &str = "server:5000";
+const SERVER_ADDR: &str = "87.242.87.212:5000";
 
 fn main() {
     let mut stream = TcpStream::connect(SERVER_ADDR).unwrap();

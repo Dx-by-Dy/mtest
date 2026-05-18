@@ -24,13 +24,3 @@ services:
 
     ports:
       - "5000:5000"
-
-  client:
-    build: .
-    stdin_open: true
-    tty: true
-
-    command: ./target/release/client
-
-    depends_on:
-      - server
