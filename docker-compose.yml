@@ -7,9 +7,6 @@ services:
 
     command: ./target/release/logger
 
-    ports:
-      - "6000:6000"
-
     volumes:
       - ./logs:/app/logs:Z
 
