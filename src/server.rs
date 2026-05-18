@@ -9,6 +9,7 @@ const LOGGER_ADDR: &str = "logger:6000";
 type Clients = Arc<Mutex<Vec<TcpStream>>>;
 
 fn broadcast(msg: &str, clients: &Clients) {
+    println!("broadcasting");
     let mut clients = clients.lock().unwrap();
 
     clients.retain_mut(|client| match client.write_all(msg.as_bytes()) {
