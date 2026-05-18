@@ -1,4 +1,4 @@
-use std::io::{BufRead, BufReader, Write};
+use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -11,7 +11,14 @@ type Clients = Arc<Mutex<Vec<TcpStream>>>;
 fn broadcast(msg: &str, clients: &Clients) {
     let mut clients = clients.lock().unwrap();
 
-    clients.retain_mut(|client| client.write_all(msg.as_bytes()).is_ok());
+    clients.retain_mut(|client| match client.write_all(msg.as_bytes()) {
+        Ok(_) => true,
+
+        Err(e) => {
+            println!("broadcast error: {}", e);
+            false
+        }
+    });
 }
 
 fn log_message(msg: &str, logger: &Arc<Mutex<Option<TcpStream>>>) {
@@ -20,28 +27,34 @@ fn log_message(msg: &str, logger: &Arc<Mutex<Option<TcpStream>>>) {
     }
 }
 
-fn handle_client(stream: TcpStream, clients: Clients, logger: Arc<Mutex<Option<TcpStream>>>) {
-    let reader_stream = stream.try_clone().unwrap();
-
+fn handle_client(mut stream: TcpStream, clients: Clients, logger: Arc<Mutex<Option<TcpStream>>>) {
     {
         let mut locked = clients.lock().unwrap();
         locked.push(stream.try_clone().unwrap());
     }
 
-    let reader = BufReader::new(reader_stream);
+    let mut buffer = [0u8; 1024];
 
-    for line in reader.lines() {
-        match line {
-            Ok(msg) => {
-                let full = format!("{msg}\n");
+    loop {
+        match stream.read(&mut buffer) {
+            Ok(0) => {
+                println!("client disconnected");
+                break;
+            }
+
+            Ok(n) => {
+                let msg = String::from_utf8_lossy(&buffer[..n]);
 
                 println!("msg: {}", msg);
 
-                broadcast(&full, &clients);
-                log_message(&full, &logger);
+                broadcast(&msg, &clients);
+                log_message(&msg, &logger);
             }
 
-            Err(_) => break,
+            Err(e) => {
+                println!("read error: {}", e);
+                break;
+            }
         }
     }
 }

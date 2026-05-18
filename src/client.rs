@@ -29,13 +29,22 @@ fn main() {
     });
 
     loop {
+        println!("Write your message:");
         let mut input = String::new();
 
         stdin().read_line(&mut input).unwrap();
 
-        if stream.write_all(input.as_bytes()).is_err() {
-            println!("send failed");
-            break;
+        match stream.write_all(input.as_bytes()) {
+            Ok(_) => {
+                println!("sent");
+            }
+
+            Err(e) => {
+                println!("send error: {}", e);
+                break;
+            }
         }
+
+        stream.flush().unwrap();
     }
 }
